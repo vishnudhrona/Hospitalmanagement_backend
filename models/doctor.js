@@ -41,10 +41,11 @@ const userSchema = new Schema({
         type: String,
         required: false 
     },
-    
+
     signupStatus : {
-        type: Boolean,
-        default : false
+        type: String,
+        required: false 
+        // default : false
     }
 
     // createdAt: { 

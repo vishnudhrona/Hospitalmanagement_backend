@@ -66,7 +66,7 @@ const docOtpVerify = async (docOtpDetails, res) => {
                     return res.status(404).json({ error : "Verification Timeout" })
                 }
                 let newDoctor = new Doctor(doctor.toObject())
-                newDoctor.signupStatus = false
+                newDoctor.signupStatus = "interdict"
                 let doc = await newDoctor.save()
                 doc = doc.toObject()
                 delete doc.password

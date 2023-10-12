@@ -71,11 +71,13 @@ let getAllDoctors = () => {
 }
 
 let doctorApproval = (doctorId) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async(resolve, reject) => {
         try {
-            Doctor.findByIdAndUpdate(doctorId, { signupStatus : true }).then((approvedDoctor) => {
-                console.log(approvedDoctor,'guattttt');
-                if(approvedDoctor.signupStatus) {
+         await Doctor.findByIdAndUpdate(doctorId, { signupStatus : "Approved" }, { new : true }).then(async(approvedDoctor) => {
+             approvedDoctor = await approvedDoctor
+             console.log(approvedDoctor,'guattttt');
+                if(approvedDoctor.signupStatus === "Approved") {
+                    console.log('why did not get email');
                     const transporter = nodemailer.createTransport({
                         host: "forward-email=centaurr252@gmail.com",
                         port: 465,
@@ -116,10 +118,58 @@ let doctorApproval = (doctorId) => {
     })
 }
 
+let doctorInterdict = (doctorId) => {
+    return new Promise(async(resolve, reject) => {
+        try {
+           await Doctor.findByIdAndUpdate(doctorId, {signupStatus : 'Interdict'}, { new : true }).then(async(interdictDoctor) => {
+            interdictDoctor = await interdictDoctor
+                console.log(interdictDoctor.signupStatus,'tyuuuuuuuxxxxxxxx');
+                if(interdictDoctor.signupStatus === "Interdict") {
+                    console.log('its inderdicttt');
+                    const transporter = nodemailer.createTransport({
+                        host: "forward-email=centaurr252@gmail.com",
+                        port: 465,
+                        secure: true,
+                        service: 'Gmail',
+                        auth: {
+                          // TODO: replace `user` and `pass` values from <https://forwardemail.net>
+                          user: 'centaurr252@gmail.com',
+                          pass: 'nuslvzvfidhqyjrr',
+                        },
+                      });
+
+
+                      async function main() {
+                          // send mail with defined transport object
+                          const info = await transporter.sendMail({
+                              from: 'centaurr252@gmail.com', // sender address
+                              to: interdictDoctor.email, // list of receivers
+                          subject: "Hello ✔", // Subject line
+                          text: "Hello world?", // plain text body
+                          html: "<b>Hello world?</b>", // html body
+                        });
+                        console.log('this is working');
+                      
+                        console.log("Message sent: %s", info.messageId);
+                        
+                      }
+                      
+                      main().catch(console.error);
+
+                      resolve(interdictDoctor.signupStatus)
+                }
+            })
+        } catch(err) {
+            console.error(err,'tyhtyhtyhhhhhhhhhh');
+        }
+    })
+}
+
 module.exports = {
     getAllUsers,
     blockUser,
     unblockUser,
     getAllDoctors,
-    doctorApproval
+    doctorApproval,
+    doctorInterdict,
 }

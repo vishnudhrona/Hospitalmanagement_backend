@@ -44,7 +44,7 @@ let doctorLogin = async (req, res) => {
             return;
         }
         if(response.status) {
-            if(response.doctor.signupStatus === true) {
+            if(response.doctor.signupStatus === "Approved") {
                 res.status(200).json({ status : true, message : "Login Successful", user : response.doctor })
             } else {
                 res.status(200).json({ status : true, message : 'Approval pending',user : response.doctor })

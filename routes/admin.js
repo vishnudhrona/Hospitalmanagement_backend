@@ -11,6 +11,7 @@ router.get('/userblock', adminControllers.blockUser)
 router.get('/userunblock', adminControllers.unblockUser)
 router.get('/doctormanagement',adminControllers.doctorManagement)
 router.get('/doctorapproval',adminControllers.doctorApproval)
+router.get('/doctorinterdict',adminControllers.doctorInterdict)
 
 
 module.exports = router;

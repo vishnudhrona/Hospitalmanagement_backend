@@ -93,11 +93,26 @@ let doctorManagement = (req, res) => {
 let doctorApproval = (req, res) => {
     let doctorId = req.query.doctorId
     try {
-        adminHelpers.doctorApproval(doctorId)
+        adminHelpers.doctorApproval(doctorId).then((status) => {
+            res.status(200).json({ status : status })
+        })
     } catch(err) {
         console.error(err,'jkjkjkjkjk');
     }
     console.log(doctorId,'byubyubyubyu');
+}
+
+let doctorInterdict = (req, res) => {
+    let doctorId = req.query.doctorId
+    console.log(doctorId,'gygygygygygygygygy'); 
+    try {
+        adminHelpers.doctorInterdict(doctorId).then((status) => {
+            console.log(status,'byyyyyyyyyyyyyyyyuuuuuuu');
+            res.status(200).json({ status : status })
+        })
+    } catch(err) {
+        console.error(err,'qsdqsddddddddddddd');
+    }
 }
 
 
@@ -109,4 +124,5 @@ module.exports = {
     unblockUser,
     doctorManagement,
     doctorApproval,
+    doctorInterdict,
 }
