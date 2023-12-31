@@ -30,8 +30,9 @@ const getAllUsers = () => {
 let blockUser = (userId) => {
  return new Promise(async(resolve, reject) => {
     try {
-        let blockUser = await User.findByIdAndUpdate(userId, { signupStatus : false })
+        let blockUser = await User.findByIdAndUpdate(userId, { signupStatus : "block" }, { new : true })
         blockUser = blockUser.toObject()
+        console.log(blockUser.signupStatus,'aaaaaaAAAAAAAAAA');
         resolve(blockUser.signupStatus)
     } catch(err) {
         console.error(err,'mjmjmjmjmj');
@@ -43,8 +44,9 @@ let blockUser = (userId) => {
 let unblockUser = (userId) => {
     return new Promise(async(resolve, reject) => {
         try {
-            let unblockUser = await User.findByIdAndUpdate(userId, { signupStatus : true })
+            let unblockUser = await User.findByIdAndUpdate(userId, { signupStatus : "unblock" }, { new : true })
         unblockUser = unblockUser.toObject()
+        console.log(unblockUser.signupStatus,'tttttvvvvv');
         resolve(unblockUser.signupStatus)
         } catch(err) {
             console.error(err,'njnjnjnjnjnjn');

@@ -43,8 +43,9 @@ const userSchema = new Schema({
     },
 
     signupStatus : {
-        type: Boolean,
-        default : false
+        type: String,
+        required: false 
+        // default : false
     }
 
 

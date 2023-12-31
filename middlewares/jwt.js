@@ -5,6 +5,7 @@ module.exports = {
 
     autherizeRole : (requiredRole) => (req, res, next) => {
         const baererToken = req.headers.authorization
+        console.log(baererToken,'got it');
 
         if(!baererToken) {
             return res.status(401).json({ message : "No token provided"})
@@ -17,6 +18,7 @@ module.exports = {
         const jwtKey = process.env.JWT_TOKEN;
 
         jwt.verify(token, jwtKey, (err, decodedToken) => {
+            req.token = token;
             if(err) {
                 return res.status(401).json({ message : err.message})
             }
@@ -35,7 +37,9 @@ module.exports = {
         return new Promise((resolve, reject) => {
             const jwtKey = process.env.JWT_TOKEN;
             const payload = {
+                userId : user._id,
                 user : user.patientfirstname,
+                number : user.number,
                 role : 'user'
             }
             jwt.sign(payload, jwtKey, {expiresIn : '2h'}, (err, token) => {
@@ -49,11 +53,15 @@ module.exports = {
     },
 
     signDoctor : (doctor) => {
-        console.log(doctor,'cccccfffffffqqqqqq');
+        console.log(doctor.firstname,'cccccfffffffqqqqqq');
+        console.log(doctor.number,'cccccfffffffqqqqqq');
+        console.log(doctor._id,'cccccfffffffqqqqqq');
         return new Promise((resolve, reject) => {
             const jwtKey = process.env.JWT_TOKEN;
             const payload = {
-                user : doctor.firstname,
+                doctorId : doctor._id,
+                doctorName : doctor.firstname,
+                doctorNumber : doctor.number,
                 role : 'doctor'
             }
             jwt.sign(payload, jwtKey, {expiresIn : '2h'}, (err, token) => {

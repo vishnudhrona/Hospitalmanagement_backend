@@ -43,13 +43,12 @@ let getUser = (req, res) => {
 
 let blockUser = (req, res) => {
     let userId = req.query.userId
+    console.log(userId,'reqqqqqqqqqqqqqq');
     try {
         adminHelpers.blockUser(userId).then((status) => {
             console.log(status,'bvbvbvbvbvbvbv');
-            if(status === false) {
+            if(status === "block") {
                 res.status(200).json({ message : 'User is blocked', status })
-            } else {
-                res.status(404).json({message : 'something went to wrong', status })
             }
         })
     } catch(err) {
@@ -64,10 +63,8 @@ let unblockUser = (req, res) => {
     try {
         adminHelpers.unblockUser(userId).then((status) => {
             console.log(status,'errrrrrrrrrrrrrrr');
-            if(status === true) {
+            if(status === "unblock") {
                 res.status(200).json({ message : 'user is Unblocked', status})
-            } else {
-                res.status(404).json({message : 'something went to wrong', status })
             }
         })
     } catch(err) {

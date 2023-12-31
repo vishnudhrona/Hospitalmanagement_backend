@@ -6,6 +6,10 @@ var Doctor = require('../models/doctor')
 const { Vonage } = require('@vonage/server-sdk');
 const { signUser } = require('../middlewares/jwt');
 var temporaryDoctor = require('../models/temporaryDoctor');
+var DoctorProfile = require('../models/doctorProfile')
+const DoctorTime = require('../models/docScheduledTime')
+const BookingDetails = require('../models/bookingDetails')
+const nodemailer = require("nodemailer");
 
 const accountSid = process.env.accountSID
 const authToken = process.env.authToken
@@ -98,7 +102,7 @@ const docLogin = (loginDetails) => {
                     console.log(status,'rtyurytuisadjkklj');
                     delete doctor.password
                     if(status) {
-                        response.doctor = doctor
+                        response = doctor
                         response.status = true
                         resolve(response)
                     } else {
@@ -114,8 +118,135 @@ const docLogin = (loginDetails) => {
     })
 }
 
+const addDoctorProfile = (docProf) => {
+    console.log(docProf,'helpers doc');
+    let doctorProf = null
+    let response = {}
+    return new Promise(async (resolve, reject) => {
+        try {
+            doctorProf = await DoctorProfile.create(docProf)
+            if(doctorProf) {
+                response.status = true
+                resolve(response)
+            } else {
+                resolve({status : false})
+            }
+        } catch(err) {
+            console.error(err);
+            reject(err)
+        }
+    })
+}
+
+const fetchDoctorProfile = (doctorId) => {
+    console.log(doctorId,'zzzzqqqqqqqqqqq');
+    return new Promise(async(resolve, reject) => {
+        await DoctorProfile.findOne({doctorId : doctorId})
+        .then((doctorProfile) => {
+            resolve(doctorProfile)
+        })
+    })
+}
+
+const doctorTimeschedule = (timeSchedule) => {
+    console.log(timeSchedule,'i got timeSchedule');
+    return new Promise(async(resolve, reject) => {
+        try {
+            let docTime = await DoctorTime.create(timeSchedule)
+            console.log(docTime,'bbbbyyyyeeeeee');
+            resolve(docTime)
+        } catch(err) {
+            console.error(err,'hyyyyy');
+            reject(err)
+        }
+    })
+}
+
+const fetchDoctorTimeSchedule = (docId) => {
+    return new Promise((resolve, reject) => {
+        try {
+            DoctorTime.find({ doctorId : docId }).then((response) => {
+                console.log(response, 'i got fetch time response');
+                resolve(response)
+            })
+        } catch(err) {
+            console.error(err,'i got error in fetch doctor timeschedule');
+            reject(err)
+        }
+    })
+}
+
+const fetchBookingDetails = (docId) => {
+    console.log(docId,'xxxxxxxxx');
+    return new Promise(async(resolve, reject) => {
+        try {
+            let bookings = await BookingDetails.find({ doctorId : docId.doctorId})
+            console.log(bookings,'qqqqqqqqqqqq');
+            if(bookings) {
+                resolve(bookings)
+            } else {
+                reject()
+            }
+        } catch(err) {
+            console.error(err);
+        }
+    })
+}
+
+const invitingPatient = (invitingDetails) => {
+    console.log(invitingDetails,'zzzzzzzzz');
+    return new Promise(async(resolve, reject) => {
+        try {
+            let bookings = await BookingDetails.findOne({ userEmail : invitingDetails.bookinguseremail })
+            console.log(bookings,'qqqqqqqqqvvvvvrrrrr');
+            if(bookings) {
+                const transporter = nodemailer.createTransport({
+                    host: "forward-email=centaurr252@gmail.com",
+                    port: 465,
+                    secure: true,
+                    service: 'Gmail',
+                    auth: {
+                      // TODO: replace `user` and `pass` values from <https://forwardemail.net>
+                      user: 'centaurr252@gmail.com',
+                      pass: 'nuslvzvfidhqyjrr',
+                    },
+                  });
+
+
+                  async function main() {
+                    // send mail with defined transport object
+                    const info = await transporter.sendMail({
+                        from: 'centaurr252@gmail.com', // sender address
+                        to: invitingDetails.bookinguseremail, // list of receivers
+                    subject: "Hello ✔", // Subject line
+                    text: 'copy this url to your browser', // plain text body
+                    html: `<p>${invitingDetails.urlWithData}</p>`, // html body
+                  });
+                  console.log('this is working');
+                
+                  console.log("Message sent: %s", info.messageId);
+                  
+                }
+                
+                main().catch(console.error);
+
+                resolve({status : true})
+            }
+        } catch(err) {
+            console.error(err,'inviting error');
+        }
+    })
+
+}
+
 module.exports = {
     doctorSignup,
     docOtpVerify,
     docLogin,
+    addDoctorProfile,
+    fetchDoctorProfile,
+    doctorTimeschedule,
+    fetchDoctorTimeSchedule,
+    fetchBookingDetails,
+    invitingPatient
 }
